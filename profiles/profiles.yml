@@ -1,0 +1,12 @@
+de_workbench_bq:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      keyfile: .secrets/sa.json
+      project: test-project-446313
+      dataset: analytics_dev
+      location: EU
+      threads: 4
+      priority: interactive
