@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: stg_customers
+    tags: ["stg"]
+    columns:
+      - name: customer_id
+        description: "Technischer, bereinigter Primärschlüssel"
+        tests:
+          - not_null
+          - unique
+  - name: stg_products_ext
+    tags: ["stg"]
+    columns:
+      - name: product_id
+        description: "Technischer, bereinigter Primärschlüssel"
+        tests:
+          - not_null
+          - unique
+  - name: stg_orders_ext
+    tags: ["stg"]
+    columns:
+      - name: order_id
+        description: "Technischer, bereinigter Primärschlüssel"
+        tests:
+          - not_null
+          - unique

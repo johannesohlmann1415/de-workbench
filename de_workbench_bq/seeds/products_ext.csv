@@ -1,0 +1,6 @@
+product_id,product_name,category,tags,attributes
+1,SQL 101,books,"[""education"", ""bestseller""]","{""format"": ""paperback"", ""pages"": 240}"
+2,Wireless Mouse,electronics,"[""electronics"", ""peripheral"", ""bestseller""]","{""color"": ""black"", ""warranty_months"": 24}"
+3,Coffee Mug,home,"[""home"", ""kitchen""]","{""color"": ""white"", ""volume_ml"": 350}"
+4,Yoga Mat,sports,"[""sports"", ""fitness""]","{""color"": ""green"", ""length_cm"": 180}"
+5,Dark Chocolate,groceries,"[""groceries"", ""snack""]","{""cacao_percent"": 70}"

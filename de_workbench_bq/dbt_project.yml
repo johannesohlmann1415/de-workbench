@@ -29,8 +29,52 @@ clean-targets:         # directories to be removed by `dbt clean`
 # In this example config, we tell dbt to build all models in the example/
 # directory as views. These settings can be overridden in the individual model
 # files using the `{{ config(...) }}` macro.
+
+seeds:
+  +schema: raw              # -> analytics_dev_raw (BigQuery-Dataset)
+  +quote_columns: false
+  de_workbench_bq:
+    orders_ext:
+      +column_types:
+        order_id: integer
+        customer_id: integer
+        order_date: date
+        status: string
+        total_amount: numeric     # wichtig: Dezimal
+        coupon_codes: string      # JSON-String, später casten
+        meta: string
+    products_ext:
+      +column_types:
+        product_id: integer
+        product_name: string
+        category: string
+        tags: string
+        attributes: string
+    order_items:
+      +column_types:
+        order_id: integer
+        product_id: integer
+        quantity: integer
+        unit_price: numeric
+    customers:
+      +column_types:
+        customer_id: integer
+        name: string
+        country: string
+        signup_date: date
+
 models:
   de_workbench_bq:
     # Config indicated by + and applies to all files under models/example/
-    example:
+    staging:
+      +schema: stg
       +materialized: view
+      +tags: ['stg']
+    intermediate:
+      +schema: int
+      +materialized: view
+      +tags: ['int']
+    marts:
+      +schema: marts
+      +materialized: table
+      +tags: ['mart']
