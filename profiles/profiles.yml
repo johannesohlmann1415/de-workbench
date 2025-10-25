@@ -4,7 +4,7 @@ de_workbench_bq:
     dev:
       type: bigquery
       method: service-account
-      keyfile: .secrets/sa.json
+      keyfile: /home/jo-oh/dev/data_warehouse/.secrets/sa.json
       project: test-project-446313
       dataset: analytics_dev
       location: EU
