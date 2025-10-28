@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: fct_orders
+    tags: ["marts"]
+    columns:
+      - name: order_id
+        description: "Technischer, bereinigter Primärschlüssel"
+        tests:
+          - not_null
+          - unique

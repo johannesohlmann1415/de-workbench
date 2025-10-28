@@ -25,3 +25,17 @@ models:
         tests:
           - not_null
           - unique
+  - name: stg_order_items
+    tags: ["stg"]
+    columns:
+      - name: order_id
+        description: "Technischer, bereinigter Primärschlüssel"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders_ext')
+              field: order_id
+      - name: quantity
+        description: "Technischer, bereinigter Primärschlüssel"
+        tests:
+          - non_negative
