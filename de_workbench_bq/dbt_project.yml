@@ -76,5 +76,4 @@ models:
       +tags: ['int']
     marts:
       +schema: marts
-      +materialized: table
       +tags: ['mart']

@@ -5,6 +5,7 @@ order_id,customer_id,order_date,status,total_amount,coupon_codes,meta
 104,3,2024-05-12,completed,200.0,"[""LOYALTY5""]","{""device"": ""desktop"", ""payment"": {""method"": ""card""}, ""shipping"": {""method"": ""standard"", ""price"": 7.5}}"
 105,4,2024-07-20,completed,45.0,,"{""device"": ""mobile"", ""payment"": {""method"": ""card""}, ""shipping"": {""method"": ""standard"", ""price"": 4.0}}"
 106,2,2024-12-05,refunded,80.0,"[""REFUND""]","{""device"": ""desktop"", ""payment"": {""method"": ""card""}, ""shipping"": {""method"": ""express"", ""price"": 12.0}}"
-107,5,2025-01-10,completed,150.0,"[""WELCOME10""]","{""device"": ""mobile"", ""payment"": {""method"": ""card""}, ""shipping"": {""method"": ""express"", ""price"": 0.0}}"
+107,5,2025-01-10,refunded,150.0,"[""WELCOME10""]","{""device"": ""mobile"", ""payment"": {""method"": ""card""}, ""shipping"": {""method"": ""express"", ""price"": 0.0}}"
 108,3,2024-01-02,completed,30.0,[],"{""device"": ""mobile"", ""payment"": {""method"": ""card""}, ""shipping"": {""method"": ""standard"", ""price"": 3.0}}"
 109,4,2024-11-11,completed,300.0,"[""VIP20""]","{""device"": ""desktop"", ""payment"": {""method"": ""card""}, ""shipping"": {""method"": ""express"", ""price"": 12.0}}"
+110,4,2025-01-09,refunded,23.23,"[""WELCOME10""]","{""device"": ""desktop"", ""payment"": {""method"": ""card""}, ""shipping"": {""method"": ""express"", ""price"": 12.0}}"

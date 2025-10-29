@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: fct_orders
+    tags: ["marts"]
+    columns:
+      - name: order_id
+        description: "Technischer, bereinigter Primärschlüssel"
+        tests:
+          - not_null
+          - unique
+      - name: items_revenue
+        tests:
+          - not_null
+          - non_negative
+      - name: order_total_calc
+        tests:
+          - not_null
+          - non_negative
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['completed','cancelled','refunded']
+      - name: customer_id
+        description: "Technischer, bereinigter Primärschlüssel"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders_ext')
+              field: customer_id
