@@ -5,7 +5,7 @@ models:
     tags: ["marts"]
     columns:
       - name: order_id
-        description: "Technischer, bereinigter Primärschlüssel"
+        description: "Technischer, bereinigter Fremdschlüssel"
         tests:
           - not_null
           - unique
@@ -26,5 +26,31 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_orders_ext')
+              to: ref('stg_customers')
               field: customer_id
+  - name: dim_customer
+    tags: ["marts"]
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+      - name: ltv_completed
+        tests:
+          - not_null
+          - non_negative
+      - name: orders_completed_cnt
+        tests:
+          - not_null
+          - non_negative
+  - name: dim_product
+    tags: ["marts"]
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('stg_products_ext')
+              field: product_id
+      

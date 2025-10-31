@@ -77,3 +77,7 @@ models:
     marts:
       +schema: marts
       +tags: ['mart']
+
+snapshots:
+  +schema: snapshot
+  +tags: ["snapshot"]   
