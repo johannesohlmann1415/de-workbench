@@ -1,0 +1,120 @@
+{{ config(
+  materialized='incremental',
+  incremental_strategy='merge',
+  unique_key=['cohort_month','activity_month'],
+  partition_by={
+    "field": "activity_month",
+    "data_type": "date",
+    "granularity": "month"
+  },
+  cluster_by=['cohort_month']
+) }}
+
+with base_customer_cte as (
+    Select
+    dc.customer_id,
+    dc.country, 
+    dc.signup_date, 
+    dc.ltv_completed,
+    dc.first_completed_order_date,
+    dc.last_completed_order_date,
+    dc.orders_completed_cnt,
+    fo.order_id,
+    fo.status, 
+    fo.order_date, 
+    fo.items_revenue, 
+    fo.shipping_price, 
+    fo.device, 
+    fo.payment_method,
+    fo.coupon_count,
+    COALESCE(DATE_TRUNC(dc.first_completed_order_date, MONTH), DATE_TRUNC(dc.signup_date, MONTH)) as cohort_month,
+    DATE_TRUNC(DATE(fo.order_date), MONTH) AS activity_month,
+    Case when fo.coupon_count >= 1 then 1 else 0 end as is_order_with_coupon,
+    From {{ ref('dim_customer') }} as dc
+    left join {{ ref('fct_orders') }} as fo using(customer_id)
+    where fo.status='completed'
+),
+customer_ext_cte as (
+    Select
+    *,
+    DATE_DIFF(activity_month, cohort_month, MONTH) AS months_from_acq,
+    CASE
+        WHEN activity_month = DATE_TRUNC(CURRENT_DATE('Europe/Berlin'), MONTH) THEN TRUE
+        ELSE FALSE
+    END AS is_current_month,
+    Case when DATE_DIFF(activity_month, cohort_month, MONTH) = 0 then 1 else 0 as is_new_customer_order,
+    Case when DATE_DIFF(activity_month, cohort_month, MONTH) >= 1 then 1 else 0 as is_retained_customer_order,
+    --Count(*) over(partition by device, customer_id, cohort_month, activity_month) as device_count
+    From base_customer_cte
+),
+cohort_cte as (
+    Select
+    cohort_month,
+    Count(Distinct(customer_id)) as cohort_size_first_order,
+    From customer_ext_cte
+    Group by cohort_month
+),
+
+cohort_x_activity_x_customer_cte as (
+    Select
+    cohort_month,
+    activity_month,
+    customer_id,
+    Count(Distinct(order_id)) as customer_activity_orders,
+    Sum(is_order_with_coupon) as customer_coupon_orders,
+    Case when Sum(is_new_customer_order) >= 1 then 1 else 0 as is_new_customer,
+    Case when Sum(is_retained_customer_order) >= 1 then 1 else 0 as is_retained_customer,
+    Sum(items_revenue) as customer_items_revenue,
+    Sum(shipping_price) as customer_shipping_revenue,
+    Sum(items_revenue) + Sum(shipping_price) as gross_revenue,
+    From customer_ext_cte
+    Group by cohort_month, activity_month, customer_id
+),
+cohort_x_activity_cte as (
+    Select
+    Count(Distinct(customer_id)) as active_customers,
+    Sum(is_new_customer) as new_customers,
+    Sum(is_retained_customer) as retained_customers
+    Sum(customer_activity_orders) as orders_cnt
+    Sum(customer_coupon_orders) as discounted_orders_cnt,
+    Sum(customer_items_revenue) as items_revenue,
+    Sum(customer_shipping_revenue) as shipping_revenue,
+    Sum(gross_revenue) as gross_revenue,
+    From cohort_x_activity_x_customer_cte
+    Group by cohort_month, activity_month
+),
+device_counts as (
+    Select
+    cohort_month,
+    activity_month,
+    device,
+    Count(Distinct(order_id)) as device_count,
+    From customer_ext_cte
+    Group by 1,2,3
+),
+top_device as (
+    Select
+    cohort_month,
+    activity_month,
+    device as top_device,
+    From device_counts
+    Qualify Row_Number() over(partition by cohort_month, activity_month order by device_count desc) = 1
+),
+ltv_cte as (
+    Select 
+    
+    From cohort_x_activity_cte
+
+)
+
+Select
+ca.*,
+c.cohort_size_first_order,
+orders_cnt / NULLIF(active_customers,0) as orders_per_active,
+retained_customers / NULLIF(cohort_size_first_order,0) as retention_rate,
+(active_customers - new_customers) / NULLIF(active_customers,0) as repeat_rate,
+td.top_device,
+Sum(ca.gross_revenue) over(partition by ca.cohort_month  order by activity_month Rows Between unbounded preceding and current row) as ltv_to_date
+From cohort_x_activity_cte as ca
+left join cohort_cte as c using(cohort_month)
+left join top_device as td using(cohort_month, activity_month)
