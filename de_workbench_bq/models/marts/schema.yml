@@ -53,4 +53,6 @@ models:
           - relationships:
               to: ref('stg_products_ext')
               field: product_id
+  - name: fct_category_month
+    tags: ["marts"]
       
